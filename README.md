@@ -13,9 +13,9 @@ Envoie un message pushover si un stream twitch est lancé / coupé des chaines t
 
 1. Remplacer example.env par .env et ajoutez vos informations Twitch et Pushover ainsi que les chaines twitch que vous souhaitez surveiller.
 
-2. Executer npm i pour installer les modules requis.
+2. Executer `npm install` pour installer les modules requis.
 
-3. Executer le script !
+3. Executer le script avec `node twitchnotifer.js` !
 
 Par défaut le script va refresh toute les 5 minutes libre à vous de modifier cette valeur a votre guise.
 
@@ -31,23 +31,26 @@ Par défaut le script va refresh toute les 5 minutes libre à vous de modifier c
 7. Cliquez sur "Créer"
 8. Copiez le "Client ID" et le "Client Secret" et ajoutez les dans le fichier .env
 
-Ensuite il vous faudras demander un code pour faire la requete pour obtenir le code d'Oauth et le refresh token.
+9. Ensuite il vous faudras demander un code pour faire la requete qui permettra d'obtenir le refresh token.
 
-1. Changer le `client_id` par votre "Client ID" et le `redirect_uri`par votre "Redirect URI" dans l'url ci dessous
+- Changer le `client_id` par votre "Client ID" et le `redirect_uri`par votre "Redirect URI" dans l'url ci dessous
 
-`https://id.twitch.tv/oauth2/authorize?client_id=YOUR_CLIENT_ID&redirect_uri=YOUR_REDIRECT_URI&response_type=code&scope=channel:manage:broadcast`
+- `https://id.twitch.tv/oauth2/authorize?client_id=YOUR_CLIENT_ID&redirect_uri=YOUR_REDIRECT_URI&response_type=code&scope=channel:manage:broadcast`
 
-2. le code sera dans l'url de redirection
+10. Récuperer le code dans l'url de redirection
+- Exemple: `http://localhost/?code=YOUR_CODE&scope=channel%3Amanage%3Abroadcast`
 
-3. Faite une requete POST avec les paramètres suivant:
+11. Faite une requete POST avec les paramètres suivant pour récuperer le refresh_token:
 - `grant_type` : `authorization_code`
 - `client_id` : votre "Client ID"
 - `client_secret`: votre "Client Secret"
 - `code`: le code obtenu dans l'étape 2
 - `redirect_uri`: votre "Redirect URI"
 
+12. Copiez votre "refresh_token" et ajoutez le dans le fichier .env
+
 Methode alternative:
-1. [Twitch Token Generator](https://twitchtokengenerator.com/)
+[Twitch Token Generator](https://twitchtokengenerator.com/)
 
 ## Pushover
 
