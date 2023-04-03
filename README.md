@@ -11,12 +11,10 @@ Envoie un message pushover si un stream twitch est lancé / coupé des chaines t
 
 # Configuration
 
-1. Remplacer example.env par .env et ajoutez vos informations Twitch et pushover.
+1. Remplacer example.env par .env et ajoutez vos informations Twitch et pushover ainsi que les chaines twitch que vous souhaitez surveiller.
 
-2. Dans twitchnotifer.js ajouter les noms des chaines twitch à surveiller a la ligne 4.
+2. Executer npm i pour installer les modules requis.
 
-3. Executer npm i pour installer les modules requis.
-
-4. Executer le script !
+3. Executer le script !
 
 Par défaut le script va refresh toute les 5 minutes libre à vous de modifier cette valeur a votre guise.
