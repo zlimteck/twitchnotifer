@@ -11,10 +11,50 @@ Envoie un message pushover si un stream twitch est lancé / coupé des chaines t
 
 # Configuration
 
-1. Remplacer example.env par .env et ajoutez vos informations Twitch et pushover ainsi que les chaines twitch que vous souhaitez surveiller.
+1. Remplacer example.env par .env et ajoutez vos informations Twitch et Pushover ainsi que les chaines twitch que vous souhaitez surveiller.
 
 2. Executer npm i pour installer les modules requis.
 
 3. Executer le script !
 
 Par défaut le script va refresh toute les 5 minutes libre à vous de modifier cette valeur a votre guise.
+
+# Comment obtenir les informations Twitch et Pushover ?
+
+## Twitch
+
+1. Connectez vous sur [Twitch Développeur](https://dev.twitch.tv)
+2. Allez dans votre console développeur (en haut a droite)
+3. Allez dans "Applications"
+4. Cliquez sur "Enregistrer votre application"
+6. Remplissez les champs demandés
+7. Cliquez sur "Créer"
+8. Copiez le "Client ID" et le "Client Secret" et ajoutez les dans le fichier .env
+
+Ensuite il vous faudras demander un code pour faire la requete pour obtenir le code d'Oauth et le refresh token.
+
+1. Changer le `client_id` par votre "Client ID" et le `redirect_uri`par votre "Redirect URI" dans l'url ci dessous
+
+`https://id.twitch.tv/oauth2/authorize?client_id=YOUR_CLIENT_ID&redirect_uri=YOUR_REDIRECT_URI&response_type=code&scope=channel:manage:broadcast`
+
+2. le code sera dans l'url de redirection
+
+3. Faite une requete POST avec les paramètres suivant:
+- `grant_type` : `authorization_code`
+- `client_id` : votre "Client ID"
+- `client_secret`: votre "Client Secret"
+- `code`: le code obtenu dans l'étape 2
+- `redirect_uri`: votre "Redirect URI"
+
+Methode alternative:
+1. [Twitch Token Generator](https://twitchtokengenerator.com/)
+
+## Pushover
+
+1. Connectez vous sur [Pushover](https://pushover.net/)
+2. Copier votre "Your User Key" et ajoutez le dans le fichier .env
+3. Allez dans "Your Applications"
+4. Cliquez sur "Create an Application / API Token"
+5. Remplissez les champs comme vous le souhaitez
+6. Cliquez sur "Create"
+7. Copiez le "API Token" et ajoutez le dans le fichier .env
