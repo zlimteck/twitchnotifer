@@ -104,8 +104,7 @@ async function checkStreamStatus(channelName) {
             if (streamStatuses[channelName] === 'offline') { // Surveille si la chaine est offline
                 push.send({
                     title: `${channelName} vient de lancer son stream !`,
-                    message: `Jeu: ${stream.game_name}\n\nTitre: ${stream.title}\n\nViewers: ${stream.viewer_count}\n\nDate: ${startedAt}`,
-                    url: `https://www.twitch.tv/${channelName}`,
+                    message: `Jeu: ${stream.game_name}\n\nTitre: ${stream.title}\n\nViewers: ${stream.viewer_count}\n\nDate: ${startedAt}\n\nLien vers la chaine: https://www.twitch.tv/${channelName}`,
                     sound: 'magic',
                     priority: 0
                 });
