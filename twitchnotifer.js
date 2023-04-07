@@ -1,7 +1,8 @@
 const axios = require('axios');
 const Push = require('pushover-notifications');
+const colors = require('colors');
 require('dotenv').config();
-const TWITCH_CHANNEL_NAMES = process.env.TWITCH_CHANNEL_NAMES.split(','); //Liste des chaines à surveiller
+const TWITCH_CHANNEL_NAMES = process.env.TWITCH_CHANNEL_NAMES.split(',').filter(Boolean);
 const TWITCH_CLIENT_ID = process.env.TWITCH_CLIENT_ID;
 const TWITCH_CLIENT_SECRET = process.env.TWITCH_CLIENT_SECRET;
 const TWITCH_REFRESH_TOKEN = process.env.TWITCH_REFRESH_TOKEN;
@@ -31,7 +32,7 @@ async function getAccessToken() {
         accessTokenExpiration = Date.now() + (response.data.expires_in * 1000);
     } // Renouvellement du token d'access si celui-ci est expiré
     return accessToken;
-} console.log(`Connexion à Twitch: OK\n${TWITCH_CHANNEL_NAMES.length} chaines à surveiller`);
+} console.log(`${colors.green(`Connexion à Twitch: OK\n${TWITCH_CHANNEL_NAMES.length} chaines à surveiller`)}`);
 
 // Verification de la connexion a Pushover
 push.send({
@@ -43,7 +44,7 @@ push.send({
     if (err) {
         throw err;
     }
-    console.log(`Pushover: ${result}`);
+    console.log(`${colors.green(`Pushover: ${result}`)}`);
 });
 
 const online = [];
@@ -66,8 +67,8 @@ function updateStreamStatuses(channelName, status) {
             online.splice(online.indexOf(channelName), 1);
         } // Supprime la chaine du tableau online
     }
-    console.clear();
-    console.log(`Chaine(s) en ligne: ${online.join(', ')}\n\nChaine(s) hors ligne: ${offline.join(', ')}\n`);
+
+    let nextCheckTime = performance.now() + 300000; // Temps de la prochaine vérification
     const nextCheck = new Date(Date.now() + 300000).toLocaleString('fr-FR', {
         day: '2-digit',
         month: '2-digit',
@@ -76,7 +77,28 @@ function updateStreamStatuses(channelName, status) {
         minute: '2-digit',
         second: '2-digit',
     });
-    console.log(`Prochaine vérification: ${nextCheck}`); // Affiche l'heure de la prochaine vérification
+
+    function updateProgressBar() {
+        const now = performance.now();
+        const timeLeft = Math.ceil((nextCheckTime - now) / 1000); // Temps restant en secondes
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        const progressBarLength = 30;
+        const progressBarFilled = Math.floor((300000 - (nextCheckTime - now)) / (300000 / progressBarLength)); 
+        const progressBarEmpty = progressBarLength - progressBarFilled;
+        const progressBar = "[" + "=".repeat(progressBarFilled) + " ".repeat(progressBarEmpty) + "]"; // Barre de progression
+
+        console.clear();
+        console.log(`${colors.green('Chaine(s)')} ${colors.green('en ligne:')} ${online.map(channelName => channelName ? channelName.yellow : '').join(', ')}\n\n${colors.red('Chaine(s)')} ${colors.red('hors ligne:')} ${offline.map(channelName => channelName ? channelName.yellow : '').join(', ')}\n`);
+        console.log(`${colors.blue(`Prochaine vérification: ${nextCheck} | Restant: ${minutes}m ${seconds}s`)} ${colors.rainbow(`${progressBar}`)}`);
+
+        if (timeLeft > 0) {
+            setTimeout(updateProgressBar, 500); // Met à jour la barre de progression toutes les 500 millisecondes
+        } else {
+        console.log(colors.blue('Vérification en cours...'));
+    }
+}
+updateProgressBar();
 }
 
 // Verification du statut des chaines pour pushover
@@ -124,7 +146,7 @@ async function checkStreamStatus(channelName) {
             updateStreamStatuses(channelName, 'offline');
         }
     } catch (error) {
-        console.error('Erreur lors de la vérification du statut du stream :', error);
+        console.error(`${colors.red('Erreur lors de la vérification du statut du stream :', error)}`);
         if (!isErrorSent) {
             push.send({
                 title: 'Erreur de connexion a twitch',
@@ -142,5 +164,4 @@ for (const channelName of TWITCH_CHANNEL_NAMES) {
     checkStreamStatus(channelName);
     setInterval(() => checkStreamStatus(channelName), 300000); // Rafraichie toutes les 5 minutes
 }
-
 checkStreamStatus();
